@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include "main.h"
 
 /**
  * is_blank - checks if a line is empty or only spaces/tabs
@@ -24,6 +19,33 @@ int is_blank(const char *s)
 			return (0);
 	}
 	return (1);
+}
+
+/**
+ * trim_spaces - removes leading and trailing spaces/tabs from a string
+ * @s: string to trim
+ *
+ * Return: pointer to the trimmed string
+ */
+char *trim_spaces(char *s)
+{
+	char *end;
+
+	if (s == NULL)
+		return (NULL);
+
+	while (*s == ' ' || *s == '\t')
+		s++;
+
+	if (*s == '\0')
+		return (s);
+
+	end = s + strlen(s) - 1;
+	while (end > s && (*end == ' ' || *end == '\t'))
+		end--;
+
+	*(end + 1) = '\0';
+	return (s);
 }
 
 /**
@@ -50,7 +72,7 @@ void execute_command(char *line)
 		argv[0] = line;
 		argv[1] = NULL;
 
-		if (execve(line, argv, NULL) == -1)
+		if (execve(line, argv, environ) == -1)
 			perror("Error");
 		exit(EXIT_FAILURE);
 	}
@@ -70,6 +92,7 @@ int main(void)
 	char *line = NULL;
 	size_t len = 0;
 	ssize_t read;
+	char *cmd;
 
 	while (1)
 	{
@@ -85,14 +108,15 @@ int main(void)
 		}
 
 		line[strcspn(line, "\n")] = '\0';
+		cmd = trim_spaces(line);
 
-		if (is_blank(line))
+		if (is_blank(cmd))
 			continue;
 
-		if (strcmp(line, "exit") == 0)
+		if (strcmp(cmd, "exit") == 0)
 			break;
 
-		execute_command(line);
+		execute_command(cmd);
 	}
 
 	free(line);

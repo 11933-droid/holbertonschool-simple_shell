@@ -6,8 +6,29 @@
 #include <sys/wait.h>
 
 /**
- * execute_command - Forks and executes a command
- * @line: Command to execute (full path)
+ * is_blank - checks if a line is empty or only spaces/tabs
+ * @s: string to check
+ *
+ * Return: 1 if blank, 0 otherwise
+ */
+int is_blank(const char *s)
+{
+	int i;
+
+	if (s == NULL)
+		return (1);
+
+	for (i = 0; s[i] != '\0'; i++)
+	{
+		if (s[i] != ' ' && s[i] != '\t')
+			return (0);
+	}
+	return (1);
+}
+
+/**
+ * execute_command - forks and executes a command
+ * @line: command to execute (full path)
  *
  * Return: Nothing
  */
@@ -18,6 +39,12 @@ void execute_command(char *line)
 	char *argv[2];
 
 	pid = fork();
+	if (pid == -1)
+	{
+		perror("fork");
+		return;
+	}
+
 	if (pid == 0)
 	{
 		argv[0] = line;
@@ -27,21 +54,14 @@ void execute_command(char *line)
 			perror("Error");
 		exit(EXIT_FAILURE);
 	}
-	else if (pid > 0)
-	{
-		wait(&status);
-	}
 	else
 	{
-		perror("fork");
+		waitpid(pid, &status, 0);
 	}
 }
 
 /**
- * main - Simple UNIX command interpreter
- *
- * Description: Displays a prompt, waits for the user to enter a command,
- * executes it, and repeats the process until EOF (Ctrl+D) or "exit".
+ * main - simple UNIX command interpreter (simple shell 0.1)
  *
  * Return: Always 0 (Success)
  */
@@ -53,15 +73,22 @@ int main(void)
 
 	while (1)
 	{
-		printf("$ ");
+		if (isatty(STDIN_FILENO))
+			printf("$ ");
+
 		read = getline(&line, &len, stdin);
 		if (read == -1)
 		{
-			printf("\n");
+			if (isatty(STDIN_FILENO))
+				printf("\n");
 			break;
 		}
 
 		line[strcspn(line, "\n")] = '\0';
+
+		if (is_blank(line))
+			continue;
+
 		if (strcmp(line, "exit") == 0)
 			break;
 

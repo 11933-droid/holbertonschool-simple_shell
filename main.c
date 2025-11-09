@@ -49,8 +49,8 @@ char *trim_spaces(char *s)
 }
 
 /**
- * execute_command - forks and executes a command with args
- * @line: command line string
+ * execute_command - forks and executes a command with arguments
+ * @line: full command line string
  *
  * Return: Nothing
  */
@@ -90,7 +90,7 @@ void execute_command(char *line)
 }
 
 /**
- * main - simple UNIX command interpreter (simple shell 0.1)
+ * main - simple UNIX command interpreter (simple shell 0.2)
  *
  * Return: Always 0 (Success)
  */

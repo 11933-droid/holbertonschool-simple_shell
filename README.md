@@ -1,13 +1,13 @@
-# 🐚 Simple Shell
+#  Simple Shell
 
-## 📖 Overview
+##  Overview
 The **Simple Shell** project is a UNIX command-line interpreter written in C.  
 It replicates core Bash functionalities such as reading commands, parsing them, creating new processes, and executing programs.  
 Developed as part of the **Holberton School low-level programming curriculum**, it demonstrates mastery of process management, system calls, and memory handling.
 
 ---
 
-## ⚙️ Features
+##  Features
 - Execute UNIX commands (`/bin/ls`, `/bin/pwd`, `/bin/date`, etc.)
 - Handle command-line arguments (`/bin/ls -l /tmp`)
 - Search executables in the system PATH
@@ -20,12 +20,12 @@ Developed as part of the **Holberton School low-level programming curriculum**, 
 
 ---
 
-## 🧩 Compilation
+##  Compilation
 To compile the shell:
 ```bash
 gcc -Wall -Werror -Wextra -pedantic -std=gnu89 *.c -o hsh
 
-💻 Usage
+ Usage
 
 Run the shell interactively:
 
@@ -42,7 +42,7 @@ $ ls -l /var
 $ env
 $ exit
 
-🧠 Learning Objectives
+ Learning Objectives
 
 Understand how a shell parses and executes commands.
 
@@ -52,7 +52,7 @@ Explore PATH resolution, environment variables, and system calls.
 
 Practice structured programming, error handling, and memory management in C.
 
-📋 Task Explanations
+ Task Explanations
 Task 0 – Betty would be proud
 
 Ensure all C files follow the Betty coding style.

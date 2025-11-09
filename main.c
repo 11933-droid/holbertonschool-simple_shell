@@ -49,8 +49,8 @@ char *trim_spaces(char *s)
 }
 
 /**
- * execute_command - forks and executes a command
- * @line: command to execute (full path)
+ * execute_command - forks and executes a command with args
+ * @line: command line string
  *
  * Return: Nothing
  */
@@ -58,7 +58,9 @@ void execute_command(char *line)
 {
 	pid_t pid;
 	int status;
-	char *argv[2];
+	char *argv[100];
+	char *token;
+	int i = 0;
 
 	pid = fork();
 	if (pid == -1)
@@ -69,10 +71,15 @@ void execute_command(char *line)
 
 	if (pid == 0)
 	{
-		argv[0] = line;
-		argv[1] = NULL;
+		token = strtok(line, " \t");
+		while (token != NULL && i < 99)
+		{
+			argv[i++] = token;
+			token = strtok(NULL, " \t");
+		}
+		argv[i] = NULL;
 
-		if (execve(line, argv, environ) == -1)
+		if (execve(argv[0], argv, environ) == -1)
 			perror("Error");
 		exit(EXIT_FAILURE);
 	}

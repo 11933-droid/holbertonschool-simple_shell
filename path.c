@@ -30,16 +30,20 @@ char *find_path(char *cmd)
 	if (strchr(cmd, '/') != NULL)
 	{
 		if (access(cmd, X_OK) == 0)
-		{
-		full_path = _strdup(cmd);
-		return (full_path);
-		}
+			return (_strdup(cmd));
 		return (NULL);
 	}
 
 	path_env = _getenv("PATH");
-	if (path_env == NULL || *path_env == '\0')
+	if (path_env == NULL)
 		return (NULL);
+
+	if (*path_env == '\0')
+	{
+		if (access(cmd, X_OK) == 0)
+			return (_strdup(cmd));
+		return (NULL);
+	}
 
 	path_copy = _strdup(path_env);
 	if (path_copy == NULL)
@@ -55,6 +59,7 @@ char *find_path(char *cmd)
 			free(path_copy);
 			return (NULL);
 		}
+
 		strcpy(full_path, dir);
 		strcat(full_path, "/");
 		strcat(full_path, cmd);

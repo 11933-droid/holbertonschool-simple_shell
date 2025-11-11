@@ -39,7 +39,7 @@ char *find_path(char *cmd)
 	path_env = _getenv("PATH");
 
 	if (path_env == NULL || *path_env == '\0')
-		path_env = "/bin:/usr/bin";
+		return (NULL);
 
 	path_copy = _strdup(path_env);
 	if (path_copy == NULL)

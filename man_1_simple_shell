@@ -1,0 +1,119 @@
+.TH simple_shell 1 "November 2025" "simple_shell" "User Commands"
+.SH NAME
+simple_shell \- a small UNIX command interpreter
+
+.SH SYNOPSIS
+.B hsh
+.RI [ input ]
+
+.B ./hsh
+
+.SH DESCRIPTION
+.B simple_shell
+is a minimal UNIX shell. It reads commands from the standard input,
+parses them into a command name and optional arguments, and executes
+either absolute/relative path commands or commands found in the
+directories listed in
+.BR PATH .
+
+It supports interactive mode (with a prompt) and non\-interactive mode
+(reading from pipes/files).
+
+In interactive mode a prompt
+.BR "$ "
+is displayed and a command line is read using
+.BR getline (3).
+
+In non\-interactive mode, commands are read from standard input until
+end of file.
+
+A command line always ends with a new line character.
+
+.SH FEATURES
+.IP \[bu] 2
+Displays a prompt and waits for the user to type a command when
+running interactively.
+.IP \[bu]
+Executes commands given as absolute or relative paths
+(e.g.
+.BR /bin/ls ).
+.IP \[bu]
+Searches the
+.B PATH
+environment variable to find commands (e.g.
+.BR ls ).
+If
+.B PATH
+is empty or unset, no search is performed.
+.IP \[bu]
+Handles command lines with arguments.
+.IP \[bu]
+Handles end of file on standard input (CTRL\-D).
+.IP \[bu]
+Handles simple error reporting when a command cannot be found.
+
+.SH BUILT\-INS
+.TP
+.B exit
+Exit the shell.
+
+If
+.B exit
+is typed with no arguments, the shell terminates and returns the status
+of the last executed command.
+
+.TP
+.B env
+Print the current environment variables, one per line, in the form
+.BR NAME=VALUE .
+
+.SH RETURN VALUE
+The shell exits with the status code of the last executed command.
+If a command cannot be executed, a non\-zero status is returned.
+
+.SH ENVIRONMENT
+.TP
+.B PATH
+A colon\-separated list of directories searched to find commands
+when a command name does not contain a slash.
+If
+.B PATH
+is empty or unset, only commands given with an absolute or relative
+path are executed.
+
+.TP
+.B HOME
+May be used by future built\-ins (not implemented in this version).
+
+.SH USAGE
+Interactive mode:
+.PP
+.EX
+$ ./hsh
+$ /bin/ls
+$ ls -l /tmp
+$ env
+$ exit
+.EE
+
+Non\-interactive mode:
+.PP
+.EX
+$ echo "/bin/ls" | ./hsh
+$ echo "ls -l" | ./hsh
+$ cat script.sh | ./hsh
+.EE
+
+.SH FILES
+.TP
+.B man_1_simple_shell
+This manual page.
+
+.SH AUTHORS
+Written by students of Holberton School.
+
+.SH SEE ALSO
+.BR sh (1),
+.BR bash (1),
+.BR execve (2),
+.BR getenv (3)

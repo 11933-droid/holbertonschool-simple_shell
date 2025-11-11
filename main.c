@@ -12,6 +12,7 @@ int main(int ac, char **av)
 	ssize_t read;
 	char *cmd;
 	int cmd_count = 0;
+	int last_status = 0;
 
 	(void)ac;
 
@@ -41,9 +42,9 @@ int main(int ac, char **av)
 		if (strcmp(cmd, "exit") == 0)
 			break;
 
-		execute_command(cmd, av[0], cmd_count);
+		last_status = execute_command(cmd, av[0], cmd_count);
 	}
 
 	free(line);
-	return (0);
+	return (last_status);
 }

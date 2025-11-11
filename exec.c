@@ -33,26 +33,28 @@ static int build_argv(char *line, char **argv, int max)
 /**
  * execute_command - fork and execute a command with arguments
  * @line: full command line (will be modified)
+ * @prog_name: name of our shell program (argv[0])
+ * @cmd_count: command number (for error messages)
  *
- * Return: nothing
+ * Return: exit status of the executed command
  */
-void execute_command(char *line, char *prog_name, int cmd_count)
+int execute_command(char *line, char *prog_name, int cmd_count)
 {
 	char *argv[MAX_ARGS];
 	char *cmd_path;
 	pid_t pid;
-	int status, argc;
+	int status = 0, argc;
 
 	argc = build_argv(line, argv, MAX_ARGS);
 	if (argc == 0 || argv[0] == NULL)
-		return;
+		return (0);
 
 	cmd_path = find_path(argv[0]);
 	if (cmd_path == NULL)
 	{
 		fprintf(stderr, "%s: %d: %s: not found\n",
-				prog_name, cmd_count, argv[0]);
-		return;
+			prog_name, cmd_count, argv[0]);
+		return (127);
 	}
 
 	pid = fork();
@@ -60,7 +62,7 @@ void execute_command(char *line, char *prog_name, int cmd_count)
 	{
 		perror("fork");
 		free(cmd_path);
-		return;
+		return (1);
 	}
 
 	if (pid == 0)
@@ -74,7 +76,16 @@ void execute_command(char *line, char *prog_name, int cmd_count)
 	}
 	else
 	{
-		waitpid(pid, &status, 0);
+		if (waitpid(pid, &status, 0) == -1)
+		{
+			free(cmd_path);
+			return (1);
+		}
 		free(cmd_path);
 	}
+
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+
+	return (1);
 }

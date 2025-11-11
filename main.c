@@ -41,6 +41,13 @@ int main(int ac, char **av)
 
 		if (strcmp(cmd, "exit") == 0)
 			break;
+		if (strcmp(cmd, "env") == 0)
+		{
+			int i;
+			for (i = 0; environ[i] != NULL; i++)
+				printf("%s\n", environ[i]);
+			continue;
+		}
 
 		last_status = execute_command(cmd, av[0], cmd_count);
 	}

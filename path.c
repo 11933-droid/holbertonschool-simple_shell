@@ -12,6 +12,8 @@ int check_access(char *full_path)
 	return (0);
 }
 
+#include "main.h"
+
 /**
  * find_path - search for a command in PATH or as given
  * @cmd: command name (e.g. "ls" or "/bin/ls")
@@ -35,15 +37,9 @@ char *find_path(char *cmd)
 	}
 
 	path_env = _getenv("PATH");
-	if (path_env == NULL)
-		return (NULL);
 
-	if (*path_env == '\0')
-	{
-		if (access(cmd, X_OK) == 0)
-			return (_strdup(cmd));
-		return (NULL);
-	}
+	if (path_env == NULL || *path_env == '\0')
+		path_env = "/bin:/usr/bin";
 
 	path_copy = _strdup(path_env);
 	if (path_copy == NULL)
@@ -77,3 +73,4 @@ char *find_path(char *cmd)
 	free(path_copy);
 	return (NULL);
 }
+

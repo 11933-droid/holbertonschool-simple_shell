@@ -36,7 +36,7 @@ static int build_argv(char *line, char **argv, int max)
  *
  * Return: nothing
  */
-void execute_command(char *line)
+void execute_command(char *line, char *prog_name, int cmd_count)
 {
 	char *argv[MAX_ARGS];
 	char *cmd_path;
@@ -50,7 +50,8 @@ void execute_command(char *line)
 	cmd_path = find_path(argv[0]);
 	if (cmd_path == NULL)
 	{
-		fprintf(stderr, "%s: command not found\n", argv[0]);
+		fprintf(stderr, "%s: %d: %s: not found\n",
+				prog_name, cmd_count, argv[0]);
 		return;
 	}
 
@@ -77,4 +78,3 @@ void execute_command(char *line)
 		free(cmd_path);
 	}
 }
-

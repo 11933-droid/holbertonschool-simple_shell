@@ -11,6 +11,7 @@
 int is_blank(const char *s);
 char *trim_spaces(char *s);
 void execute_command(char *line);
+char *find_path(char *command);
 
 extern char **environ;
 

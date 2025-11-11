@@ -10,6 +10,8 @@
 
 int is_blank(const char *s);
 char *trim_spaces(char *s);
+char *_strdup(const char *s);
+char *_getenv(const char *name);
 void execute_command(char *line);
 char *find_path(char *command);
 

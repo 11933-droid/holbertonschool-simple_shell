@@ -29,29 +29,37 @@ char *find_path(char *cmd)
 
 	if (strchr(cmd, '/') != NULL)
 	{
-		if (check_access(cmd))
-			return (strdup(cmd));
+		if (access(cmd, X_OK) == 0)
+		{
+		full_path = _strdup(cmd);
+		return (full_path);
+		}
 		return (NULL);
 	}
 
-	path_env = getenv("PATH");
-	if (!path_env)
+	path_env = _getenv("PATH");
+	if (path_env == NULL || *path_env == '\0')
 		return (NULL);
 
-	path_copy = strdup(path_env);
-	if (!path_copy)
+	path_copy = _strdup(path_env);
+	if (path_copy == NULL)
 		return (NULL);
 
 	dir = strtok(path_copy, ":");
-	while (dir)
+	while (dir != NULL)
 	{
-		len = strlen(dir) + strlen(cmd) + 2;
+		len = strlen(dir) + 1 + strlen(cmd) + 1;
 		full_path = malloc(len);
-		if (!full_path)
-			break;
+		if (full_path == NULL)
+		{
+			free(path_copy);
+			return (NULL);
+		}
+		strcpy(full_path, dir);
+		strcat(full_path, "/");
+		strcat(full_path, cmd);
 
-		snprintf(full_path, len, "%s/%s", dir, cmd);
-		if (check_access(full_path))
+		if (access(full_path, X_OK) == 0)
 		{
 			free(path_copy);
 			return (full_path);
@@ -64,4 +72,3 @@ char *find_path(char *cmd)
 	free(path_copy);
 	return (NULL);
 }
-

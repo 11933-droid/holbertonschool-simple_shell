@@ -51,3 +51,48 @@ char *trim_spaces(char *s)
 	return (s);
 }
 
+/**
+ * _strdup - duplicate a string using malloc
+ * @s: string to copy
+ *
+ * Return: pointer to new string, or NULL on failure
+ */
+char *_strdup(const char *s)
+{
+	char *copy;
+	size_t len;
+
+	if (s == NULL)
+		return (NULL);
+	len = strlen(s) + 1;
+	copy = malloc(len);
+	if (copy == NULL)
+		return (NULL);
+
+	strcpy(copy, s);
+	return (copy);
+}
+
+/**
+ * _getenv - get the value of an environment variable
+ * @name: variable name (e.g. "PATH")
+ *
+ * Return: pointer to value (inside environ) or NULL if not found
+ */
+char *_getenv(const char *name)
+{
+	int i;
+	size_t len;
+
+	if (name == NULL || *name == '\0')
+		return (NULL);
+
+	len = strlen(name);
+	for (i = 0; environ[i] != NULL; i++)
+	{
+		if (strncmp(environ[i], name, len) == 0 && environ[i][len] == '=')
+			return (environ[i] + len + 1);
+	}
+	return (NULL);
+}
+

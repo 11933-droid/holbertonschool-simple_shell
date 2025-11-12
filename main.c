@@ -21,7 +21,7 @@ int main(int ac, char **av)
 		if (isatty(STDIN_FILENO))
 			printf("$ ");
 
-		read = _getline(&line, &len);
+		read = getline(&line, &len, stdin);
 		if (read == -1)
 		{
 			if (isatty(STDIN_FILENO))

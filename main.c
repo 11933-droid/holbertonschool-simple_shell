@@ -1,18 +1,57 @@
 #include "main.h"
 
 /**
- * main - simple UNIX command interpreter (simple shell 0.2)
+ * print_env - prints current environment variables
+ */
+static void print_env(void)
+{
+	int i = 0;
+
+	while (environ[i])
+	{
+		printf("%s\n", environ[i]);
+		i++;
+	}
+}
+
+/**
+ * handle_builtin - run builtin if any
+ * @cmd: trimmed command string
+ * @last_status: pointer to last status (unused here, just for symmetry)
  *
- * Return: Always 0 (Success)
+ * Return: 1 if builtin handled and continue loop,
+ *         -1 if should exit shell,
+ *         0 if not a builtin.
+ */
+static int handle_builtin(char *cmd, int *last_status)
+{
+	(void)last_status;
+
+	if (strcmp(cmd, "exit") == 0)
+		return (-1);
+
+	if (strcmp(cmd, "env") == 0)
+	{
+		print_env();
+		return (1);
+	}
+
+	return (0);
+}
+
+/**
+ * main - simple UNIX command interpreter
+ * @ac: argument count
+ * @av: argument vector
+ *
+ * Return: last command exit status
  */
 int main(int ac, char **av)
 {
-	char *line = NULL;
-	size_t len = 0;
-	ssize_t read;
-	char *cmd;
-	int cmd_count = 0;
-	int last_status = 0;
+	char *line = NULL, *cmd;
+	size_t cap = 0;
+	ssize_t nread;
+	int count = 0, last = 0, bi;
 
 	(void)ac;
 
@@ -21,37 +60,31 @@ int main(int ac, char **av)
 		if (isatty(STDIN_FILENO))
 			printf("$ ");
 
-		read = getline(&line, &len, stdin);
-		if (read == -1)
+		nread = _getline(&line, &cap);
+		if (nread == -1)
 		{
 			if (isatty(STDIN_FILENO))
 				printf("\n");
 			break;
 		}
 
-		if (read > 0 && line[read - 1] == '\n')
-			line[read - 1] = '\0';
+		if (nread > 0 && line[nread - 1] == '\n')
+			line[nread - 1] = '\0';
 
 		cmd = trim_spaces(line);
-
 		if (is_blank(cmd))
 			continue;
 
-		cmd_count++;
-
-		if (strcmp(cmd, "exit") == 0)
+		count++;
+		bi = handle_builtin(cmd, &last);
+		if (bi == -1)
 			break;
-		if (strcmp(cmd, "env") == 0)
-		{
-			int i;
-			for (i = 0; environ[i] != NULL; i++)
-				printf("%s\n", environ[i]);
+		if (bi == 1)
 			continue;
-		}
 
-		last_status = execute_command(cmd, av[0], cmd_count);
+		last = execute_command(cmd, av[0], count);
 	}
 
 	free(line);
-	return (last_status);
+	return (last);
 }

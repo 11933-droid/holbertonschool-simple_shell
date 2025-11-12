@@ -17,7 +17,7 @@ char *_strdup(const char *s);
 char *_getenv(const char *name);
 int execute_command(char *line, char *prog_name, int cmd_count);
 char *find_path(char *command);
-char *get_line(int fd);
+ssize_t _getline(char **lineptr, size_t *n);
 
 extern char **environ;
 
